@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7eee5">
+  <title>จดหมายถึงคุณ</title>
+  <style>
+    :root {
+      color-scheme: light;
+      font-family: "Leelawadee UI", "Tahoma", sans-serif;
+      color: #604b47;
+      background: #f7eee5;
+      font-synthesis: none;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      min-width: 320px;
+      min-height: 100vh;
+      margin: 0;
+      overflow: hidden;
+      background:
+        radial-gradient(ellipse at 50% 43%, rgba(255, 255, 255, .8), transparent 55%),
+        #f7eee5;
+    }
+
+    main {
+      display: grid;
+      min-height: 100vh;
+      place-items: center;
+      padding: 32px 20px;
+    }
+
+    .scene {
+      width: min(100%, 520px);
+      text-align: center;
+    }
+
+    .eyebrow {
+      margin: 0 0 12px;
+      color: #b27c76;
+      font-size: .78rem;
+      font-weight: 700;
+      letter-spacing: .22em;
+    }
+
+    h1 {
+      margin: 0;
+      color: #684d49;
+      font-family: Georgia, "Leelawadee UI", serif;
+      font-size: clamp(2rem, 6vw, 2.8rem);
+      font-weight: 500;
+    }
+
+    .hint {
+      margin: 12px 0 0;
+      color: #9b8178;
+      font-size: .95rem;
+      transition: opacity .3s ease;
+    }
+
+    .letter-stage {
+      position: relative;
+      height: 380px;
+      margin: 16px auto 0;
+      perspective: 1000px;
+    }
+
+    .letter {
+      position: absolute;
+      z-index: 1;
+      visibility: hidden;
+      top: 124px;
+      left: 50%;
+      display: flex;
+      width: min(76%, 340px);
+      height: 214px;
+      flex-direction: column;
+      align-items: center;
+      padding: 27px 24px;
+      overflow: hidden;
+      border: 1px solid rgba(153, 119, 91, .18);
+      border-radius: 3px;
+      background:
+        repeating-linear-gradient(0deg, transparent 0 30px, rgba(161, 128, 104, .09) 30px 31px),
+        #fffdf8;
+      box-shadow: 0 8px 24px rgba(101, 67, 55, .12);
+      transform: translate(-50%, 0);
+      transition: height .8s ease, top .8s ease, transform .8s ease, box-shadow .8s ease;
+    }
+
+    .letter-heart {
+      margin-bottom: 11px;
+      color: #c47c7b;
+      font-size: 1.25rem;
+    }
+
+    .letter h2 {
+      margin: 0 0 12px;
+      color: #765752;
+      font-family: Georgia, "Leelawadee UI", serif;
+      font-size: 1.2rem;
+      font-weight: 500;
+    }
+
+    .letter p {
+      margin: 0;
+      color: #78665d;
+      font-size: .9rem;
+      line-height: 1.9;
+    }
+
+    .signature {
+      margin-top: auto !important;
+      align-self: flex-end;
+      color: #aa7772 !important;
+      font-family: Georgia, "Leelawadee UI", serif;
+      font-style: italic;
+    }
+
+    .envelope-button {
+      position: absolute;
+      z-index: 2;
+      top: 182px;
+      left: 50%;
+      width: min(88%, 390px);
+      height: 230px;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      cursor: pointer;
+      transform: translateX(-50%);
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .envelope {
+      position: absolute;
+      inset: 0;
+      overflow: visible;
+      filter: drop-shadow(0 15px 14px rgba(112, 73, 60, .15));
+    }
+
+    .envelope-back {
+      position: absolute;
+      inset: 0;
+      border-radius: 5px;
+      background: #e8b8a9;
+    }
+
+    .envelope-pocket {
+      position: absolute;
+      z-index: 3;
+      inset: 0;
+      clip-path: polygon(0 0, 50% 57%, 100% 0, 100% 100%, 0 100%);
+      border-radius: 5px;
+      background: linear-gradient(145deg, #f0c8b7, #e5ad9d);
+    }
+
+    .envelope-fold-left,
+    .envelope-fold-right {
+      position: absolute;
+      z-index: 2;
+      inset: 0;
+      border-radius: 5px;
+      background: #eabaaa;
+    }
+
+    .envelope-fold-left {
+      clip-path: polygon(0 0, 54% 57%, 0 100%);
+      background: #edc0b0;
+    }
+
+    .envelope-fold-right {
+      clip-path: polygon(100% 0, 46% 57%, 100% 100%);
+      background: #e5ad9d;
+    }
+
+    .envelope-flap {
+      position: absolute;
+      z-index: 4;
+      inset: 0;
+      clip-path: polygon(0 0, 100% 0, 50% 59%);
+      border-radius: 5px;
+      background: linear-gradient(155deg, #f4d0bd, #eabaaa);
+      transform-origin: 50% 0;
+      transition: transform .65s ease, z-index 0s .3s;
+    }
+
+    .seal {
+      position: absolute;
+      z-index: 5;
+      top: 48%;
+      left: 50%;
+      display: grid;
+      width: 46px;
+      aspect-ratio: 1;
+      place-items: center;
+      border: 1px solid rgba(255, 255, 255, .45);
+      border-radius: 50%;
+      background: #c47d78;
+      box-shadow: 0 3px 8px rgba(119, 66, 57, .19);
+      color: #fff5ed;
+      font-size: 1.2rem;
+      transform: translate(-50%, -50%);
+      transition: opacity .25s ease, transform .3s ease;
+    }
+
+    .envelope-button:hover .seal {
+      transform: translate(-50%, -50%) scale(1.08);
+    }
+
+    .envelope-button:focus-visible {
+      outline: 3px solid #ad7770;
+      outline-offset: 8px;
+      border-radius: 8px;
+    }
+
+    .scene.is-open .letter {
+      z-index: 3;
+      visibility: visible;
+      top: 17px;
+      height: 305px;
+      box-shadow: 0 14px 32px rgba(101, 67, 55, .16);
+    }
+
+    .scene.is-open .envelope-flap {
+      z-index: 1;
+      transform: rotateX(180deg);
+    }
+
+    .scene.is-open .seal {
+      opacity: 0;
+      transform: translate(-50%, -50%) scale(.7);
+    }
+
+    .scene.is-open .hint {
+      opacity: .75;
+    }
+
+    @media (max-width: 420px) {
+      .letter-stage {
+        height: 350px;
+      }
+
+      .letter {
+        width: 82%;
+        padding-inline: 18px;
+      }
+
+      .envelope-button {
+        top: 174px;
+        width: 94%;
+        height: 205px;
+      }
+
+      .scene.is-open .letter {
+        top: 15px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        scroll-behavior: auto !important;
+        transition-duration: .01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="scene" id="letter-scene">
+      <p class="eyebrow">A LITTLE NOTE FOR YOU</p>
+      <h1>มีจดหมายถึงคุณ</h1>
+      <p class="hint" id="hint">แตะที่ซองจดหมายเพื่อเปิดอ่าน</p>
+
+      <div class="letter-stage">
+        <article class="letter" id="letter-content" aria-label="เนื้อหาในจดหมาย">
+          <span class="letter-heart" aria-hidden="true">♥</span>
+          <h2>มีคนคิดถึง</h2>
+          <p>แค่อยากบอกว่า<br>คิดถึงมากก<br>คืนนี้โทรอีกได้มั้ย</p>
+          <p class="signature">ให้คนสวยอ่าน</p>
+        </article>
+
+        <button class="envelope-button" id="envelope-button" type="button"
+          aria-expanded="false" aria-controls="letter-content" aria-label="เปิดจดหมาย">
+          <span class="envelope" aria-hidden="true">
+            <span class="envelope-back"></span>
+            <span class="envelope-fold-left"></span>
+            <span class="envelope-fold-right"></span>
+            <span class="envelope-pocket"></span>
+            <span class="envelope-flap"></span>
+            <span class="seal">♥</span>
+          </span>
+        </button>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const scene = document.getElementById("letter-scene");
+    const button = document.getElementById("envelope-button");
+    const hint = document.getElementById("hint");
+    button.addEventListener("click", () => {
+      const isOpen = scene.classList.toggle("is-open");
+      button.setAttribute("aria-expanded", String(isOpen));
+      button.setAttribute("aria-label", isOpen ? "ปิดจดหมาย" : "เปิดจดหมาย");
+      hint.textContent = isOpen ? "แตะที่ซองจดหมายอีกครั้งเพื่อปิด" : "แตะที่ซองจดหมายเพื่อเปิดอ่าน";
+    });
+  </script>
+</body>
+</html>
